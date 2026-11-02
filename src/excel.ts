@@ -11,7 +11,6 @@ const COL_BOSS = 7;
 const COL_DEPT = 9;
 const COL_TYPE = 10;
 const COL_KEN = 2;
-const ROW_KEN = 3;
 
 const SEEK_COUNT = 20;
 
@@ -150,61 +149,69 @@ function getDrCount(sheet: ExcelJS.Worksheet, row: number, nextRow: number): str
   return list;
 }
 
+//東北のExcelは２行目(他は、３行目)に県がある対応
+function getFirstRow(sheet: ExcelJS.Worksheet): number {
+  let row = 1;
+  while (sheet.getCell(row, 1).text === "") {
+    row++;
+  }
+  return row;
+}
+
 export async function getInfo(bs: Buffer, kenmei: string): Promise<OutData[]> {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.load(new Uint8Array(bs).buffer);
-  const sheet = workbook.worksheets[0];
-  if (!sheet) {
-    throw new Error("No worksheet");
-  }
-
-  let ken = reFind("\\[(.+)\\]", sheet.getCell(ROW_KEN, COL_KEN).text);
-  if (!ken) {
-    ken = kenmei === "東京" ? "東京都" : `${kenmei}県`;
-  }
-
-  const first = next(sheet, 1);
-  let row: number;
-  if(first.ok){
-    row = first.row;
-  } else {
-    throw new Error("No data");
-  }
-
   const list: OutData[] = [];
-  let isEnd = false;
-  let nextRow = 0;
-  while(true || !isEnd){
-    const val = next(sheet, row);
-    if (val.ok) {
-      nextRow = val.row;
-    }else{
-      isEnd = true;
-      nextRow = row + SEEK_COUNT;
+  //東北は、各県でシートが分かれているので、全シートを処理（他のエリアは、県ごとにファイルが分かれている）
+  for await (const sheet of workbook.worksheets){
+    let ken = reFind("\\[(.+)\\]", sheet.getCell(getFirstRow(sheet), COL_KEN).text);
+    console.log(`a${ken}a`);
+    if (!ken) {
+      ken = kenmei === "東京" ? "東京都" : (kenmei === "北海道" ? "北海道" : `${kenmei}県`);
     }
-    const data: OutData = {
-      no: sheet.getCell(row, COL_NO).text,
-      id: sheet.getCell(row, COL_ID).text,
-      name: sheet.getCell(row, COL_NAME).text,
-      address: getAddress(sheet.getCell(row, COL_ZIP).text, ken),
-      tel: sheet.getCell(row, COL_TEL).text,
-      drCount: getDrCount(sheet, row, nextRow).join(","),
-      boss: sheet.getCell(row, COL_BOSS).text,
-      type: sheet.getCell(row, COL_TYPE).text,
-      status: getStatus(sheet, row, nextRow),
-      deptbeds: getDeptAndBed(sheet, row, COL_DEPT, nextRow),
+
+    const first = next(sheet, 1);
+    let row: number;
+    if(first.ok){
+      row = first.row;
+    } else {
+      throw new Error("No data");
     }
-    list.push(data);
-    console.log(`${data.no}:${data.id}:${data.name}:${data.tel}:${data.drCount}:${data.boss}:${data.type}:${data.status}:${data.deptbeds.dept}`);
-    console.log(`${data.address.zip}:${data.address.address}`)
-    for (const bed of data.deptbeds.bed) {
-      console.log(`${bed.name}:${bed.count}`);
-    }
-    if (isEnd) {
-      return list;
-    }else{
-      row = nextRow;
+
+    let isEnd = false;
+    let nextRow = 0;
+    while(true || !isEnd){
+      const val = next(sheet, row);
+      if (val.ok) {
+        nextRow = val.row;
+      }else{
+        isEnd = true;
+        nextRow = row + SEEK_COUNT;
+      }
+      const data: OutData = {
+        no: sheet.getCell(row, COL_NO).text,
+        id: sheet.getCell(row, COL_ID).text,
+        name: sheet.getCell(row, COL_NAME).text,
+        address: getAddress(sheet.getCell(row, COL_ZIP).text, ken),
+        tel: sheet.getCell(row, COL_TEL).text,
+        drCount: getDrCount(sheet, row, nextRow).join(","),
+        boss: sheet.getCell(row, COL_BOSS).text,
+        type: sheet.getCell(row, COL_TYPE).text,
+        status: getStatus(sheet, row, nextRow),
+        deptbeds: getDeptAndBed(sheet, row, COL_DEPT, nextRow),
+      }
+      list.push(data);
+      console.log(`${data.no}:${data.id}:${data.name}:${data.tel}:${data.drCount}:${data.boss}:${data.type}:${data.status}:${data.deptbeds.dept}`);
+      console.log(`${data.address.zip}:${data.address.address}`)
+      for (const bed of data.deptbeds.bed) {
+        console.log(`${bed.name}:${bed.count}`);
+      }
+      if (isEnd) {
+        break;
+      }else{
+        row = nextRow;
+      }
     }
   }
-  return [];
+  return list;
 }

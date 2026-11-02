@@ -11,15 +11,25 @@ export const INFO = {
   file: FILE_NAME
 } as const;
 
-function getPath(root: string, s :string): string{
+export function getPaths(root: string, s :string): string[] {
   const dom = new JSDOM(s);
   const elems:NodeListOf<HTMLAnchorElement> = dom.window.document.querySelectorAll<HTMLAnchorElement>("table a");
+  //医科と医科歯科併用があるため２つ取得
+  let cnt = 2;
+  const list = [];
   for(const elem of elems){
     if(elem.href.endsWith(".xlsx")){
-      return `${root}${elem.href}`;
+      list.push(`${root}${elem.href}`);
+      cnt--;
+      if (cnt === 0) {
+        break;
+      }
     }
   }
-  throw new Error("Can't get excel file path");
+  if (list.length > 0) {
+    return list;
+  }
+  throw new Error("Can't get zip file path");
 }
 
 async function getExcel(path: string): Promise<Buffer> {
@@ -35,10 +45,14 @@ async function getExcel(path: string): Promise<Buffer> {
 
 export async function getExcels(info: Info): Promise<IZipEntry[]> {
   const html = await getSite(info.site);
-  const path = getPath(info.root, html);
-  const buffer = await getExcel(path);
-  return [{
-    name: "東北.xlsx",
-    getData: () => buffer
-  }];
+  const paths = getPaths(info.root, html);
+  let list: IZipEntry[] = [];
+  for(const path of paths){
+    const buffer = await getExcel(path);
+    list.push({
+      name: "東北.xlsx",
+      getData: () => buffer
+    });
+  }
+  return list;
 }
