@@ -1,7 +1,7 @@
 import { JSDOM } from "jsdom"
 import admZip from "adm-zip"
 import iconv from "iconv-lite"
-import { getSite, getZip, type Info, type IZipEntry } from "./common.ts"
+import { getSite, getZip, getPath, type Info, type IZipEntry } from "./common.ts"
 
 const ROOT = "https://kouseikyoku.mhlw.go.jp";
 const SITE_PATH = `${ROOT}/tokaihokuriku/newpage_00287.html`;
@@ -13,20 +13,9 @@ export const INFO = {
   file: FILE_NAME
 } as const;
 
-export function getZipPath(root: string, s :string): string{
-  const dom = new JSDOM(s);
-  const elems:NodeListOf<HTMLAnchorElement> = dom.window.document.querySelectorAll<HTMLAnchorElement>("ul a");
-  for(const elem of elems){
-    if(elem.href.endsWith(".zip")){
-      return `${root}${elem.href}`;
-    }
-  }
-  throw new Error("Can't get zip file path");
-}
-
 export async function getExcels(info: Info): Promise<IZipEntry[]> {
   const html = await getSite(info.site);
-  const path = getZipPath(info.root, html);
+  const path = getPath(info.root, html, ".zip", "ul a");
   const buffer = await getZip(path);
   const admzip = new admZip(buffer,
     {
