@@ -38,7 +38,7 @@ const SQL_UPSERT = `
   insert into hospitals
     (ken_code, id, name, zip, address, tel, dr_count, boss, type, status, dept, bed)
   values
-    ($ken_code, $id, $name, $zip, $address, $tel, $dr_count, $boss, $type, $status, $dept, $bed);
+    ($ken_code, $id, $name, $zip, $address, $tel, $dr_count, $boss, $type, $status, $dept, $bed)
   on conflict (ken_code, id)
   do update set
     name = excluded.name, zip = excluded.zip, address = excluded.address, tel = excluded.tel,
