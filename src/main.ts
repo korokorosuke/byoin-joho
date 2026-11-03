@@ -22,6 +22,6 @@ export async function main(area: IArea) {
     const areaName = getAreaName(area.info.file, ent.name);
     console.log(areaName);
     const list = await getInfo(ent.getData(), areaName);
-    await write(list);
+    write(list);
   }
 }

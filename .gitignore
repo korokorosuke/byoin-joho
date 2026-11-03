@@ -9,6 +9,8 @@ out
 dist
 *.tgz
 temp
+*.db
+*.csv
 
 # code coverage
 coverage
