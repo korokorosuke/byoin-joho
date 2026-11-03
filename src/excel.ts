@@ -193,7 +193,7 @@ export async function getInfo(bs: Buffer, kenmei: string): Promise<OutData[]> {
       const data: OutData = {
         kenCode,
         no: sheet.getCell(row, COL_NO).text,
-        id: sheet.getCell(row, COL_ID).text,
+        id: sheet.getCell(row, COL_ID).text.replaceAll(/[・,-]/g, "."),
         name: sheet.getCell(row, COL_NAME).text,
         address: getAddress(sheet.getCell(row, COL_ZIP).text, ken),
         tel: sheet.getCell(row, COL_TEL).text,
