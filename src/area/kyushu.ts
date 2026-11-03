@@ -1,6 +1,5 @@
 import { JSDOM } from "jsdom"
 import admZip from "adm-zip"
-import iconv from "iconv-lite"
 import { getSite, getZip, type Info, type IZipEntry } from "./common.ts"
 
 const ROOT = "https://kouseikyoku.mhlw.go.jp";
