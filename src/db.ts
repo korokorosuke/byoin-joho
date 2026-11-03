@@ -3,6 +3,7 @@ import type { OutData } from "./excel.ts"
 
 interface Hospital {
   ken_code: string
+  ten_code: string
   id: string
   name: string
   zip: string
@@ -19,6 +20,7 @@ interface Hospital {
 const SQL_CREATE = `
   create table if not exists hospitals (
     ken_code text,
+    ten_code text,
     id text,
     name text,
     zip text,
@@ -30,16 +32,16 @@ const SQL_CREATE = `
     status text,
     dept text,
     bed text,
-    PRIMARY KEY (ken_code, id)
+    PRIMARY KEY (ken_code, ten_code, id)
   );
 `;
 
 const SQL_UPSERT = `
   insert into hospitals
-    (ken_code, id, name, zip, address, tel, dr_count, boss, type, status, dept, bed)
+    (ken_code, ten_code, id, name, zip, address, tel, dr_count, boss, type, status, dept, bed)
   values
-    ($ken_code, $id, $name, $zip, $address, $tel, $dr_count, $boss, $type, $status, $dept, $bed)
-  on conflict (ken_code, id)
+    ($ken_code, $ten_code, $id, $name, $zip, $address, $tel, $dr_count, $boss, $type, $status, $dept, $bed)
+  on conflict (ken_code, ten_code, id)
   do update set
     name = excluded.name, zip = excluded.zip, address = excluded.address, tel = excluded.tel,
     dr_count = excluded.dr_count, boss = excluded.boss, type = excluded.type, status = excluded.status,
@@ -66,6 +68,7 @@ export function write(list: OutData[]) {
     try{
       insert.run({
         $ken_code: data.kenCode,
+        $ten_code: data.tenCode,
         $id: data.id,
         $name: data.name,
         $zip: data.address.zip,

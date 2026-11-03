@@ -15,6 +15,9 @@ const COL_KEN = 2;
 
 const SEEK_COUNT = 20;
 
+const IKA = "1";
+const SHIKA = "3";
+
 type Ok = {
   ok: true,
   no: number,
@@ -40,6 +43,7 @@ export interface Address{
 
 export interface OutData {
   kenCode: string
+  tenCode: string
   no: string
   id: string
   name: string
@@ -192,8 +196,9 @@ export async function getInfo(bs: Buffer, kenmei: string): Promise<OutData[]> {
       }
       const data: OutData = {
         kenCode,
+        tenCode: IKA,
         no: sheet.getCell(row, COL_NO).text,
-        id: sheet.getCell(row, COL_ID).text.replaceAll(/[・,-]/g, "."),
+        id: sheet.getCell(row, COL_ID).text.replaceAll(/[・.,\- ]/g, ""),
         name: sheet.getCell(row, COL_NAME).text,
         address: getAddress(sheet.getCell(row, COL_ZIP).text, ken),
         tel: sheet.getCell(row, COL_TEL).text,
