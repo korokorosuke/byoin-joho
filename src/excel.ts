@@ -1,5 +1,6 @@
 import ExcelJS from "exceljs"
 import { reFind } from "./util.ts"
+import { KEN_MAP } from "./area/common.ts"
 
 const COL_NO = 1;
 const COL_ID = 2;
@@ -38,6 +39,7 @@ export interface Address{
 }
 
 export interface OutData {
+  kenCode: string
   no: string
   id: string
   name: string
@@ -165,10 +167,10 @@ export async function getInfo(bs: Buffer, kenmei: string): Promise<OutData[]> {
   //東北は、各県でシートが分かれているので、全シートを処理（他のエリアは、県ごとにファイルが分かれている）
   for await (const sheet of workbook.worksheets){
     let ken = reFind("\\[(.+)\\]", sheet.getCell(getFirstRow(sheet), COL_KEN).text);
-    console.log(`a${ken}a`);
     if (!ken) {
       ken = kenmei === "東京" ? "東京都" : (kenmei === "北海道" ? "北海道" : `${kenmei}県`);
     }
+    const kenCode = KEN_MAP.get(ken) ?? "00";
 
     const first = next(sheet, 1);
     let row: number;
@@ -189,6 +191,7 @@ export async function getInfo(bs: Buffer, kenmei: string): Promise<OutData[]> {
         nextRow = row + SEEK_COUNT;
       }
       const data: OutData = {
+        kenCode,
         no: sheet.getCell(row, COL_NO).text,
         id: sheet.getCell(row, COL_ID).text,
         name: sheet.getCell(row, COL_NAME).text,
@@ -201,11 +204,6 @@ export async function getInfo(bs: Buffer, kenmei: string): Promise<OutData[]> {
         deptbeds: getDeptAndBed(sheet, row, COL_DEPT, nextRow),
       }
       list.push(data);
-      console.log(`${data.no}:${data.id}:${data.name}:${data.tel}:${data.drCount}:${data.boss}:${data.type}:${data.status}:${data.deptbeds.dept}`);
-      console.log(`${data.address.zip}:${data.address.address}`)
-      for (const bed of data.deptbeds.bed) {
-        console.log(`${bed.name}:${bed.count}`);
-      }
       if (isEnd) {
         break;
       }else{
