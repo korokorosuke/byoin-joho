@@ -46,14 +46,16 @@ async function getData() {
     } else if (input === "8") {
       await main(hokkai);
     } else if (input === "9") {
-      await main(kyushu);
-      await main(shikoku);
-      await main(chugoku);
-      await main(kinki);
-      await main(tokai);
-      await main(kanto);
-      await main(tohoku);
-      await main(hokkai);
+      await Promise.allSettled([
+        main(kyushu),
+        main(shikoku),
+        main(chugoku),
+        main(kinki),
+        main(tokai),
+        main(kanto),
+        main(tohoku),
+        main(hokkai),
+      ]);
     }
     rl.close();
   });
