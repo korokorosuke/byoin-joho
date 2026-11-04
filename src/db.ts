@@ -1,7 +1,7 @@
-import { Database } from "bun:sqlite";
+import { Database, type SQLQueryBindings } from "bun:sqlite";
 import type { OutData } from "./excel.ts"
 
-interface Hospital {
+export interface Hospital {
   ken_code: string
   ten_code: string
   id: string
@@ -89,10 +89,27 @@ export function write(list: OutData[]) {
   db.close();
 }
 
-export function select(): Hospital[]{
+function select(where: string, params?: SQLQueryBindings[]): Hospital[]{
   const db = new Database(DB);
-  const query = db.query("SELECT * FROM hospitals");
-  const res = query.all() as Hospital[];
+  const query = db.query(`SELECT * FROM hospitals where ${where}`);
+  let res;
+  if(params){
+    res = query.all(...params) as Hospital[];
+  } else {
+    res = query.all() as Hospital[];
+  }
   db.close();
   return res;
+}
+
+export function selectAll(): Hospital[]{
+  return select("1 = 1");
+}
+
+export function selectById(id: string): Hospital[]{
+  return select("id like ?", [`%${id}%`]);
+}
+
+export function selectByName(name: string): Hospital[]{
+  return select("name like ?", [`%${name}%`]);
 }
