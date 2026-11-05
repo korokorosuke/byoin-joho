@@ -180,7 +180,6 @@ function getFirstRow(sheet: ExcelJS.Worksheet): number {
   return row;
 }
 
-export async function getInfo(bs: Buffer, kenmei: string): Promise<OutData[]> {
 export async function getInfo(bs: Buffer, kenmei: string, tenCode: string): Promise<OutData[]> {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.load(new Uint8Array(bs).buffer);
@@ -214,7 +213,6 @@ export async function getInfo(bs: Buffer, kenmei: string, tenCode: string): Prom
       const memo = getMemo(sheet, row, nextRow);
       const data: OutData = {
         kenCode,
-        tenCode: IKA,
         tenCode,
         no: sheet.getCell(row, COL_NO).text,
         id: sheet.getCell(row, COL_ID).text.replaceAll(/[・.,\- ]/g, ""),

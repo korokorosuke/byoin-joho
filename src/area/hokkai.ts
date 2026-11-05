@@ -1,15 +1,14 @@
 import { JSDOM } from "jsdom"
-import { getSite, type Info, type IZipEntry } from "./common.ts"
+import { getSite, IKA, SHIKA, type Info, type IZipEntry } from "./common.ts"
 
 const ROOT = "https://kouseikyoku.mhlw.go.jp";
 const SITE_PATH = `${ROOT}/hokkaido/gyomu/gyomu/hoken_kikan/code_ichiran.html`;
-const FILE_NAME = "(.+).xlsx";
+const FILE_NAME = "(?<name>.+).xlsx";
 
-function getPaths(root: string, s :string): string[] {
+function getPaths(root: string, s: string): string[] {
   const dom = new JSDOM(s);
   const elems:NodeListOf<HTMLAnchorElement> = dom.window.document.querySelectorAll<HTMLAnchorElement>("table a");
-  //病院と診療所があるため２つ取得
-  let cnt = 2;
+  let cnt = 3;
   const list = [];
   for(const elem of elems){
     if(elem.href.endsWith(".xlsx")){
@@ -40,13 +39,30 @@ async function getExcel(path: string): Promise<Buffer> {
 async function getExcels(info: Info): Promise<IZipEntry[]> {
   const html = await getSite(info.site);
   const paths = getPaths(info.root, html);
-  const list = [];
+  const list: IZipEntry[] = [];
+  let cnt = 1;
   for await (const path of paths){
+    let name = "";
+    let tenCode = "";
+    if (cnt === 1) {
+      name = "北海道病院.xlsx";
+      tenCode = IKA;
+    } else if (cnt === 2) {
+      name = "北海道診療所.xlsx";
+      tenCode = IKA;
+    } else if (cnt === 3) {
+      name = "北海道歯科.xlsx";
+      tenCode = SHIKA;
+    } else {
+      throw new Error("Wrong array index");
+    }
     const buffer = await getExcel(path);
     list.push({
-      name: "北海道.xlsx",
-      getData: () => buffer
+      name: name,
+      getData: () => buffer,
+      tenCode: tenCode
     });
+    cnt++;
   }
   return list;
 }
@@ -56,6 +72,7 @@ export const area = {
   info: {
     root: ROOT,
     site: SITE_PATH,
-    file: FILE_NAME
+    file: FILE_NAME,
+    file3: FILE_NAME
   } as const
 }
