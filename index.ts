@@ -68,8 +68,8 @@ function outputData() {
   rl.question("どれ？(1:csv出力):", async input => {
     if (input === "1") {
       const data = selectAll();
-      const list = data.map(a => `${a.ken_code},${a.ten_code},${a.id},${a.name},${a.zip},${a.address},${a.tel},"${a.dr_count}",${a.boss},${a.type},${a.status},"${a.dept}","${a.bed}"`);
-      list.unshift("県番号,点数番号,医療機関番号,名称,郵便番号,住所,電話番号,医師数,管理者,種別,状態,診療科,ベッド数");
+      const list = data.map(a => `${a.ken_code},${a.ten_code},${a.id},${a.name},${a.zip},${a.address},${a.tel},"${a.dr_count}",${a.boss},${a.type},${a.status},"${a.memo}","${a.dept}","${a.bed}"`);
+      list.unshift("県番号,点数番号,医療機関番号,名称,郵便番号,住所,電話番号,医師数,管理者,種別,状態,メモ,診療科,ベッド数");
       var buf = iconv.encode(list.join("\n"), "cp932");
       writeFileSync("./hospitals.csv", buf);
     }
