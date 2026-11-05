@@ -13,6 +13,7 @@ export interface Hospital {
   boss: string
   type: string
   status: string
+  memo: string
   dept: string
   bed: string
 }
@@ -30,6 +31,7 @@ const SQL_CREATE = `
     boss text,
     type text,
     status text,
+    memo text,
     dept text,
     bed text,
     PRIMARY KEY (ken_code, ten_code, id)
@@ -38,14 +40,14 @@ const SQL_CREATE = `
 
 const SQL_UPSERT = `
   insert into hospitals
-    (ken_code, ten_code, id, name, zip, address, tel, dr_count, boss, type, status, dept, bed)
+    (ken_code, ten_code, id, name, zip, address, tel, dr_count, boss, type, status, memo, dept, bed)
   values
-    ($ken_code, $ten_code, $id, $name, $zip, $address, $tel, $dr_count, $boss, $type, $status, $dept, $bed)
+    ($ken_code, $ten_code, $id, $name, $zip, $address, $tel, $dr_count, $boss, $type, $status, $memo, $dept, $bed)
   on conflict (ken_code, ten_code, id)
   do update set
     name = excluded.name, zip = excluded.zip, address = excluded.address, tel = excluded.tel,
     dr_count = excluded.dr_count, boss = excluded.boss, type = excluded.type, status = excluded.status,
-    dept = excluded.dept, bed = excluded.bed
+    memo = excluded.memo, dept = excluded.dept, bed = excluded.bed
 `;
 
 const DB = "zzzhosp.db";
@@ -78,6 +80,7 @@ export function write(list: OutData[]) {
         $boss: data.boss,
         $type: data.type,
         $status: data.status,
+        $memo: data.memo,
         $dept: data.deptbeds.dept,
         $bed: data.deptbeds.bed.map(val=>`${val.name}:${val.count}`).join(","),
       });

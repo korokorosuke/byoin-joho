@@ -17,6 +17,7 @@ function List(props: { hospitals: Hospital[] }) {
           <th>管理者</th>
           <th>種別</th>
           <th>状態</th>
+          <th>メモ</th>
           <th>診療科</th>
           <th>ベッド数</th>
         </tr>
@@ -32,7 +33,8 @@ function List(props: { hospitals: Hospital[] }) {
           <td>{hosp.boss}</td>
           <td>{hosp.type}</td>
           <td>{hosp.status}</td>
-          <td style="max-width: 30rem">{hosp.dept}</td>
+          <td>{hosp.memo.replaceAll(",", "\n")}</td>
+          <td style="max-width: 25rem">{hosp.dept}</td>
           <td>{hosp.bed.replaceAll(",", "\n")}</td>
         </tr>
       )}

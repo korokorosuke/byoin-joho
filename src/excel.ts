@@ -19,8 +19,8 @@ const IKA = "1";
 const SHIKA = "3";
 
 type Ok = {
-  ok: true,
-  no: number,
+  ok: true
+  no: number
   row: number
 }
 type Ng = {
@@ -29,16 +29,22 @@ type Ng = {
 type Next = Ok | Ng;
 
 export interface DeptAndBed{
-  dept: string,
+  dept: string
   bed: {
-    name: string,
-    count: number,
+    name: string
+    count: number
   }[],
 }
 
 export interface Address{
-  zip: string,
+  zip: string
   address: string
+}
+
+export interface Memo{
+  type: string
+  status: string
+  memo: string
 }
 
 export interface OutData {
@@ -53,6 +59,7 @@ export interface OutData {
   boss: string
   type: string
   status: string
+  memo: string
   deptbeds: DeptAndBed
 }
 
@@ -124,14 +131,23 @@ function getAddress(val: string, ken: string): Address {
   return { zip: "", address: ken };
 }
 
-function getStatus(sheet: ExcelJS.Worksheet, row: number, nextRow: number): string {
-  for (let i = row + 1; i < nextRow; i++){
-    const status = sheet.getCell(i, COL_TYPE).text;
-    if (status === "現存" || status === "休止" || status === "") {
-      return status;
+function getMemo(sheet: ExcelJS.Worksheet, row: number, nextRow: number): Memo {
+  let type = "";
+  let status = "";
+  let memo = [];
+  for (let i = row; i < nextRow; i++){
+    const val = sheet.getCell(i, COL_TYPE).text;
+    if (val === "") {
+      break;
+    } else if (val === "病院" || val === "診療所") {
+      type = val;
+    } else if (val === "現存" || val === "休止") {
+      status = val;
+    } else {
+      memo.push(val);
     }
   }
-  return "";
+  return { type, status, memo: memo.join(",") };
 }
 
 function getDrCount(sheet: ExcelJS.Worksheet, row: number, nextRow: number): string[] {
@@ -165,6 +181,7 @@ function getFirstRow(sheet: ExcelJS.Worksheet): number {
 }
 
 export async function getInfo(bs: Buffer, kenmei: string): Promise<OutData[]> {
+export async function getInfo(bs: Buffer, kenmei: string, tenCode: string): Promise<OutData[]> {
   const workbook = new ExcelJS.Workbook()
   await workbook.xlsx.load(new Uint8Array(bs).buffer);
   const list: OutData[] = [];
@@ -194,9 +211,11 @@ export async function getInfo(bs: Buffer, kenmei: string): Promise<OutData[]> {
         isEnd = true;
         nextRow = row + SEEK_COUNT;
       }
+      const memo = getMemo(sheet, row, nextRow);
       const data: OutData = {
         kenCode,
         tenCode: IKA,
+        tenCode,
         no: sheet.getCell(row, COL_NO).text,
         id: sheet.getCell(row, COL_ID).text.replaceAll(/[・.,\- ]/g, ""),
         name: sheet.getCell(row, COL_NAME).text,
@@ -204,8 +223,9 @@ export async function getInfo(bs: Buffer, kenmei: string): Promise<OutData[]> {
         tel: sheet.getCell(row, COL_TEL).text,
         drCount: getDrCount(sheet, row, nextRow).join(","),
         boss: sheet.getCell(row, COL_BOSS).text,
-        type: sheet.getCell(row, COL_TYPE).text,
-        status: getStatus(sheet, row, nextRow),
+        type: memo.type,
+        status: memo.status,
+        memo: memo.memo,
         deptbeds: getDeptAndBed(sheet, row, COL_DEPT, nextRow),
       }
       list.push(data);
