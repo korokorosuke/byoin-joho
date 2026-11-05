@@ -110,7 +110,7 @@ export function selectAll(): Hospital[]{
 }
 
 export function selectById(id: string): Hospital[]{
-  return select("id like ?", [`%${id}%`]);
+  return select("(ken_code||ten_code||id) like ?", [`%${id}%`]);
 }
 
 export function selectByName(name: string): Hospital[]{
