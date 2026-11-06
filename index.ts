@@ -7,12 +7,13 @@ import { area as tokai } from "./src/area/tokai.ts"
 import { area as kanto } from "./src/area/kanto.ts"
 import { area as tohoku } from "./src/area/tohoku.ts"
 import { area as hokkai } from "./src/area/hokkai.ts"
-import { del } from "./src/db.ts";
+import { del } from "./src/db.ts"
 import readline from "readline"
 import { selectAll } from "./src/db.ts"
 import { writeFileSync } from "fs"
 import iconv from "iconv-lite"
 import { spawn } from "child_process"
+import { Temporal } from "@js-temporal/polyfill"
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -31,6 +32,8 @@ rl.question("どれ？(1:データ取得 2:データ出力 3:ビューア起動)
 
 async function getData() {
   rl.question("どれ？(1:九州 2:四国 3:中国　4:近畿 5:東海 6:関東 7:東北 8:北海道 9:全部):", async input => {
+    const start_time = Temporal.Now.plainDateTimeISO();
+    console.log(`開始: ${start_time.toString({ smallestUnit: "second" })}`);
     del();
     if (input === "1") {
       await main(kyushu);
@@ -60,6 +63,10 @@ async function getData() {
         main(hokkai),
       ]);
     }
+    const end_time = Temporal.Now.plainDateTimeISO();
+    const diff = start_time.until(end_time, { largestUnit: "minutes" });
+    console.log(`終了: ${end_time.toString({ smallestUnit: "second" })}`);
+    console.log(`経過時間: ${diff.minutes}分 ${diff.seconds}秒`);
     rl.close();
   });
 }

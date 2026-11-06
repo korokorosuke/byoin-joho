@@ -10,6 +10,7 @@ dist
 *.tgz
 temp
 *.db
+*.db-journal
 *.csv
 
 # code coverage
