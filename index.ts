@@ -78,8 +78,8 @@ function outputData() {
 }
 
 function startViewer() {
-  console.log("終了する場合は、ctrl+cを2回押すか、画面を閉じて終了してください。");
-  console.log("ctrlキーを押しながら、以下のURLをクリックすると、ブラウザが開きます。");
+  console.log("終了する場合は、ctrl+cを2回押すか、画面を閉じてださい。");
+  console.log("以下のURLにアクセスしてください。");
   const child = spawn("bun", ["run", "view"]);
   child.stdout.on("data", (data) => {
     console.log(`${data}`);
