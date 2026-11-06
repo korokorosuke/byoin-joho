@@ -210,12 +210,26 @@ export async function getInfo(bs: Buffer, kenmei: string, tenCode: string): Prom
         isEnd = true;
         nextRow = row + SEEK_COUNT;
       }
+
+      const SEPARATOR = "・.,\\- ";
+      const temp = sheet.getCell(row + 1, COL_ID).text;
+      let anotherId;
+      let anotherCode;
+      if (new RegExp(`\\([0-9${SEPARATOR}]+\\)`, "g").test(temp)) {
+        anotherId = temp.replaceAll(new RegExp(`[()${SEPARATOR}]`, "g"), "");
+        if (tenCode === IKA) {
+          anotherCode = SHIKA;
+        } else {
+          anotherCode = IKA;
+        }
+      }
+
       const memo = getMemo(sheet, row, nextRow);
       const data: OutData = {
         kenCode,
         tenCode,
         no: sheet.getCell(row, COL_NO).text,
-        id: sheet.getCell(row, COL_ID).text.replaceAll(/[・.,\- ]/g, ""),
+        id: sheet.getCell(row, COL_ID).text.replaceAll(new RegExp(`[${SEPARATOR}]`, "g"), ""),
         name: sheet.getCell(row, COL_NAME).text,
         address: getAddress(sheet.getCell(row, COL_ZIP).text, ken),
         tel: sheet.getCell(row, COL_TEL).text,
@@ -227,6 +241,9 @@ export async function getInfo(bs: Buffer, kenmei: string, tenCode: string): Prom
         deptbeds: getDeptAndBed(sheet, row, COL_DEPT, nextRow),
       }
       list.push(data);
+      if (anotherId && anotherCode) {
+        list.push({ ...data, tenCode: anotherCode, id: anotherId });
+      }
       if (isEnd) {
         break;
       }else{
