@@ -21,11 +21,12 @@ function getAreaName(pattern: string, pattern3: string, filename: string): strin
 
 export async function main(area: IArea) {
   const entries = await area.get(area.info);
-  for (const ent of entries) {
-    console.log(ent.name);
-    const areaName = getAreaName(area.info.file, area.info.file3, ent.name);
-    console.log(areaName);
-    const list = await getInfo(ent.getData(), areaName, ent.tenCode);
-    write(list);
-  }
+  await Promise.allSettled(
+    entries.map(async (ent) => {
+      console.log(ent.name);
+      const areaName = getAreaName(area.info.file, area.info.file3, ent.name);
+      console.log(areaName);
+      const list = await getInfo(ent.getData(), areaName, ent.tenCode);
+      write(list);
+    }));
 }
