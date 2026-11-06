@@ -26,15 +26,15 @@ function List(props: { hospitals: Hospital[] }) {
       {props.hospitals.map((hosp: Hospital) =>
         <tr>
           <td>{`${hosp.ken_code}${hosp.ten_code}${hosp.id}`}</td>
-          <td>{hosp.name}</td>
-          <td>{`${hosp.zip}\n${hosp.address}`}</td>
+          <td style="max-width: 16rem">{hosp.name}</td>
+          <td style="max-width: 25rem">{`${hosp.zip}\n${hosp.address}`}</td>
           <td>{hosp.tel}</td>
           <td>{hosp.dr_count.replaceAll(",", "\n")}</td>
           <td>{hosp.boss}</td>
           <td>{hosp.type}</td>
           <td>{hosp.status}</td>
           <td>{hosp.memo.replaceAll(",", "\n")}</td>
-          <td style="max-width: 25rem">{hosp.dept}</td>
+          <td style="max-width: 18rem">{hosp.dept}</td>
           <td>{hosp.bed.replaceAll(",", "\n")}</td>
         </tr>
       )}
