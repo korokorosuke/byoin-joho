@@ -23,7 +23,7 @@ function dialogue() {
 
   rl.question("どれ？(1:データ取得 2:データ出力 3:ビューア起動):", async input => {
     if (input === "1") {
-      rl.question("どれ？(1:九州 2:四国 3:中国　4:近畿 5:東海 6:関東 7:東北 8:北海道 9:全部):", async input => {
+      rl.question("どれ？(1:九州 2:四国 3:中国 4:近畿 5:東海 6:関東 7:東北 8:北海道 9:全部):", async input => {
         await getData(input);
         rl.close();
       });

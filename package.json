@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "typecheck": "bun check",
-    "main": "bun index.ts",
+    "start": "bun index.ts",
     "dev": "bun run --hot src/viewer/index.tsx",
     "view": "bun run src/viewer/index.tsx"
   },
