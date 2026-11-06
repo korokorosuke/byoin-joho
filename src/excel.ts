@@ -125,7 +125,7 @@ function getAddress(val: string, ken: string): Address {
   if (temp && temp.length >= 4 && temp[1] && temp[2] && temp[3]) {
     return {
       zip: `${temp[1]}-${temp[2]}`,
-      address: temp[3].includes(ken) ? temp[3].trim() : `${ken}${temp[3].trim()}`,
+      address: temp[3].startsWith(ken) ? temp[3].trim() : `${ken}${temp[3].trim()}`,
     };
   }
   return { zip: "", address: ken };
