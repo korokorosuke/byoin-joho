@@ -14,6 +14,7 @@ import { writeFileSync } from "fs"
 import iconv from "iconv-lite"
 import { spawn } from "child_process"
 import { Temporal } from "@js-temporal/polyfill"
+import { styleText } from "util"
 
 function dialogue() {
   const rl = readline.createInterface({
@@ -40,7 +41,7 @@ function dialogue() {
 
 async function getData(input: string) {
   const start_time = Temporal.Now.plainDateTimeISO();
-  console.log(`開始: ${start_time.toString({ smallestUnit: "second" })}`);
+  console.log(styleText("bgCyan", `開始: ${start_time.toString({ smallestUnit: "second" })}`));
   del();
   if (input === "1") {
     await main(kyushu);
@@ -72,7 +73,7 @@ async function getData(input: string) {
   }
   const end_time = Temporal.Now.plainDateTimeISO();
   const diff = start_time.until(end_time, { largestUnit: "minutes" });
-  console.log(`終了: ${end_time.toString({ smallestUnit: "second" })}`);
+  console.log(styleText("bgGreen", `終了: ${end_time.toString({ smallestUnit: "second" })}`));
   console.log(`経過時間: ${diff.minutes}分 ${diff.seconds}秒`);
 }
 

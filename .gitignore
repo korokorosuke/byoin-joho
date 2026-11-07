@@ -12,6 +12,7 @@ temp
 *.db
 *.db-journal
 *.csv
+*.zip
 
 # code coverage
 coverage
