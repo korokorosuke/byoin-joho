@@ -19,3 +19,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+# other libraries
+|library|license|copyright|
+|-|-|-|
+|[adm-zip](https://www.npmjs.com/package/adm-zip)|MIT|Copyright (c) 2012 Another-D-Mention Software and other contributors|
+|[exceljs](https://www.npmjs.com/package/exceljs)|MIT|Copyright (c) 2014-2019 Guyon Roche|
+|[jsdom](https://www.npmjs.com/package/jsdom)|MIT|Copyright (c) 2010 Elijah Insua|
+|[iconv-lite](https://www.npmjs.com/package/iconv-lite)|MIT|Copyright (c) 2011 Alexander Shtuchkin|
+|[hono](https://www.npmjs.com/package/hono)|MIT|Copyright (c) 2021 - present, Yusuke Wada and Hono contributors|
+|[bun](https://www.npmjs.com/package/bun)|MIT|[license link](https://bun.com/docs/project/license)|
