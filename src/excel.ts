@@ -95,8 +95,8 @@ function getDeptAndBed(sheet: ExcelJS.Worksheet, row: number, col: number, nextR
       data.bed.push({ name: val.trim(), count: parseInt(tempCount) });
       isTemp = false;
       tempCount = "";
-    }else if (/.+[0-9]+/.test(val)) {
-      const res = /(.+)\s+([0-9]+)/.exec(val);
+    }else if (/.+[0-9,]+/.test(val)) {
+      const res = /(.+)\s+([0-9,]+)/.exec(val);
       if (isTemp && res && res.length >= 1 && res[0]) {
         data.bed.push({ name: res[0].trim(), count: parseInt(tempCount) });
         isTemp = false;
@@ -104,9 +104,9 @@ function getDeptAndBed(sheet: ExcelJS.Worksheet, row: number, col: number, nextR
       }else if (res && res.length >= 2 && res[1] && res[2]) {
         if(res[1].trim() === ""){
           isTemp = true;
-          tempCount = res[2];
+          tempCount = res[2].replace(",", "");
         } else {
-          data.bed.push({ name: res[1].trim(), count: parseInt(res[2]) });
+          data.bed.push({ name: res[1].trim(), count: parseInt(res[2].replace(",", "")) });
         }
       }
     }else if (!isDeptFind && val) {
