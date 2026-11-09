@@ -24,12 +24,10 @@ export async function main(area: IArea) {
   const entries = await area.get(area.info);
   await Promise.allSettled(
     entries.map(async (ent) => {
-      process.stdout.write(styleText("cyan","開始: "))
-      console.log(ent.name);
+      console.log(styleText("cyan", "開始: ") + ent.name);
       const areaName = getAreaName(area.info.file, area.info.file3, ent.name);
       const list = await getInfo(ent.getData(), areaName, ent.tenCode);
       write(list);
-      process.stdout.write(styleText("green","終了: "))
-      console.log(ent.name);
+      console.log(styleText("green", "終了: ") + ent.name);
     }));
 }

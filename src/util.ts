@@ -1,13 +1,12 @@
-import * as pathmo from "path"
-import * as fs from "fs"
+import { resolve } from "path"
 
-export function saveFile(buffer: Buffer) {
-  const savePath = pathmo.resolve(__dirname, './temp');
-  fs.writeFileSync(savePath + "/a.zip", buffer);
+export async function writeFile(buffer: Buffer): Promise<void> {
+  const savePath = resolve(__dirname, './temp');
+  await Bun.write(savePath + "/a.zip", buffer);
 }
 
-export function readFile(path: string): Buffer {
-  return fs.readFileSync(path);
+export async function readFile(path: string): Promise<Uint8Array> {
+  return await Bun.file(path).bytes();
 }
 
 export function reFind(pattern: string, text: string): string {
