@@ -105,7 +105,7 @@ function startViewer() {
 const argv = Bun.argv;
 if (argv.length <= 2) {
   await dialogue();
-} else if (argv.length === 3 && argv[3] === "3") {
+} else if (argv.length === 3 && argv[2] === "3") {
   startViewer();
 } else if (argv.length >= 4) {
   if (argv[2] === "1" && argv[3]) {
