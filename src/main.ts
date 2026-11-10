@@ -1,6 +1,6 @@
 import { styleText } from "util"
 import { getInfo } from "./excel.ts"
-import { write } from "./db.ts"
+import { write, initialize } from "./db.ts"
 import type { Info, IZipEntry } from "./area/common.ts"
 
 interface IArea{
@@ -22,6 +22,7 @@ function getAreaName(pattern: string, pattern3: string, filename: string): strin
 
 export async function main(area: IArea) {
   const entries = await area.get(area.info);
+  initialize();
   await Promise.allSettled(
     entries.map(async (ent) => {
       console.log(styleText("cyan", "開始: ") + ent.name);

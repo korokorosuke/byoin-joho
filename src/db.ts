@@ -62,33 +62,42 @@ export function del(){
   }
 }
 
-export function write(list: OutData[]) {
+export function initialize() {
   const db = new Database(DB);
   db.run(SQL_CREATE);
+  db.run("PRAGMA journal_mode = WAL");
+  db.run("PRAGMA synchronous = NORMAL");
+  db.close();
+}
+
+export function write(list: OutData[]) {
+  const db = new Database(DB);
   const insert = db.prepare(SQL_UPSERT);
-  for(const data of list){
-    try{
-      insert.run({
-        $ken_code: data.kenCode,
-        $ten_code: data.tenCode,
-        $id: data.id,
-        $name: data.name,
-        $zip: data.address.zip,
-        $address: data.address.address,
-        $tel: data.tel,
-        $dr_count: data.drCount,
-        $boss: data.boss,
-        $type: data.type,
-        $status: data.status,
-        $memo: data.memo,
-        $dept: data.deptbeds.dept,
-        $bed: data.deptbeds.bed.map(val=>`${val.name}:${val.count}`).join(","),
-      });
-    } catch (e) {
-      console.log(e);
-      console.log(`${data.id}:${data.name}`)
+  db.transaction((values: OutData[]) => {
+    for (const data of values) {
+      try {
+        insert.run({
+          $ken_code: data.kenCode,
+          $ten_code: data.tenCode,
+          $id: data.id,
+          $name: data.name,
+          $zip: data.address.zip,
+          $address: data.address.address,
+          $tel: data.tel,
+          $dr_count: data.drCount,
+          $boss: data.boss,
+          $type: data.type,
+          $status: data.status,
+          $memo: data.memo,
+          $dept: data.deptbeds.dept,
+          $bed: data.deptbeds.bed.map(val => `${val.name}:${val.count}`).join(","),
+        });
+      } catch (e) {
+        console.log(e);
+        console.log(`${data.id}:${data.name}`)
+      }
     }
-  }
+  })(list);
   db.close();
 }
 
