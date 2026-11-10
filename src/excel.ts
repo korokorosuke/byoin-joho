@@ -1,6 +1,6 @@
 import ExcelJS from "exceljs"
 import { reFind } from "./util.ts"
-import { KEN_MAP } from "./area/common.ts"
+import { KEN_MAP, IKA, SHIKA } from "./area/common.ts"
 
 const COL_NO = 1;
 const COL_ID = 2;
@@ -14,9 +14,6 @@ const COL_TYPE = 10;
 const COL_KEN = 2;
 
 const SEEK_COUNT = 20;
-
-const IKA = "1";
-const SHIKA = "3";
 
 type Ok = {
   ok: true
@@ -97,11 +94,7 @@ function getDeptAndBed(sheet: ExcelJS.Worksheet, row: number, col: number, nextR
       tempCount = "";
     }else if (/.+[0-9,]+/.test(val)) {
       const res = /(.+)\s+([0-9,]+)/.exec(val);
-      if (isTemp && res && res.length >= 1 && res[0]) {
-        data.bed.push({ name: res[0].trim(), count: parseInt(tempCount) });
-        isTemp = false;
-        tempCount = "";
-      }else if (res && res.length >= 2 && res[1] && res[2]) {
+      if (res && res.length >= 2 && res[1] && res[2]) {
         if(res[1].trim() === ""){
           isTemp = true;
           tempCount = res[2].replace(",", "");
