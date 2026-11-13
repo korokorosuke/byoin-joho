@@ -3,7 +3,7 @@ import { getSite, IKA, SHIKA, type Info, type IZipEntry } from "./common.ts"
 
 const ROOT = "https://kouseikyoku.mhlw.go.jp";
 const SITE_PATH = `${ROOT}/hokkaido/gyomu/gyomu/hoken_kikan/code_ichiran.html`;
-const FILE_NAME = "(?<name>.+).xlsx";
+const FILE_NAME = "(?<name>.+)_(.+).xlsx";
 
 function getPaths(root: string, s: string): string[] {
   const dom = new JSDOM(s);
@@ -45,13 +45,13 @@ async function getExcels(info: Info): Promise<IZipEntry[]> {
     let name = "";
     let tenCode = "";
     if (cnt === 1) {
-      name = "北海道病院.xlsx";
+      name = "北海道_病院.xlsx";
       tenCode = IKA;
     } else if (cnt === 2) {
-      name = "北海道診療所.xlsx";
+      name = "北海道_診療所.xlsx";
       tenCode = IKA;
     } else if (cnt === 3) {
-      name = "北海道歯科.xlsx";
+      name = "北海道_歯科.xlsx";
       tenCode = SHIKA;
     } else {
       throw new Error("Wrong array index");
